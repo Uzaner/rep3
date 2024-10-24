@@ -1,0 +1,42 @@
+class Atom:
+    def __init__(self, name, Z, A):
+        self.name = name  
+        self.Z = Z        
+        self.A = A        
+        self.N = A - Z    
+
+    def Gc_per_nucleon(self):
+        
+        a1, a2, a3, a4, a5 = 15.75, 17.8, 0.71, 23.7, 34
+        n1 = a1 * self.A
+        n2 = a2 * self.A**(2/3)
+        n3 = a3 * self.Z**2 / self.A**(1/3)
+        n4 = a4 * (self.N - self.Z)**2 / self.A
+        if self.A % 2 == 0:
+            if self.Z % 2 == 0 and self.N % 2 == 0:
+                n5 = a5 * self.A**-0.75
+            else: 
+                n5 = -a5 * self.A**-0.75
+        else: 
+            n5 = 0
+       
+
+        Gc = n1 - n2 - n3 - n4 + n5
+        return Gc / self.A
+
+    def atom_mass(self):
+        Mp = 1.007276
+        Mn = 1.008665
+        Gc = self.Gc_per_nucleon() * self.A / 931.5  
+        return self.Z * Mp + self.N * Mn - Gc
+
+    def atom_R(self):
+        R0 = 1.3  
+        return R0 * self.A**(1/3)
+
+    def beta(self):
+        ratio = self.N / self.Z
+        return 1 <= ratio <= 1.5
+
+    def split(self):
+        return self.A % 2 == 0 and self.Z % 2 == 0
